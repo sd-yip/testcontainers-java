@@ -104,6 +104,8 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
     private SocatContainer proxy;
 
+    private boolean communityMode = false;
+
     /**
      * Creates a new couchbase container with the default image and version.
      * @deprecated use {@link CouchbaseContainer(DockerImageName)} instead
@@ -215,6 +217,27 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
             .awaitCompletion(10, TimeUnit.SECONDS);
     }
 
+    /**
+     * Enables compatibility with community edition of couchbase server.
+     *
+     * @param communityMode if true, tries to be compatible with community edition.
+     * @return this {@link CouchbaseContainer} for chaining purposes.
+     */
+    public CouchbaseContainer withCommunityMode(final boolean communityMode) {
+        checkNotRunning();
+        this.communityMode = communityMode;
+        return this;
+    }
+
+    /**
+     * Checks if already running and if so raises an exception to prevent too-late setters.
+     */
+    private void checkNotRunning() {
+        if (isRunning()) {
+            throw new IllegalStateException("Setter can only be called before the container is running");
+        }
+    }
+
     @Override
     public List<Integer> getExposedPorts() {
         return proxy.getExposedPorts();
@@ -296,7 +319,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
         callCouchbaseRestAPI(webSettingsURL, webSettingsContent);
 
         createNodeWaitStrategy().waitUntilReady(this);
-        callCouchbaseRestAPI("/settings/indexes", "indexerThreads=0&logLevel=info&maxRollbackPoints=5&storageMode=memory_optimized");
+        callCouchbaseRestAPI("/settings/indexes", "indexerThreads=0&logLevel=info&maxRollbackPoints=5&storageMode=" + (communityMode ? "forestdb" : "memory_optimized"));
     }
 
     @NotNull
