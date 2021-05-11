@@ -24,30 +24,21 @@ public enum CouchbaseService {
   /**
    * Key-Value service.
    */
-  KV("kv"),
+  KV,
 
   /**
    * Query (N1QL) service.
    */
-  QUERY("n1ql"),
+  QUERY,
 
   /**
    * Search (FTS) service.
    */
-  SEARCH("fts"),
+  SEARCH,
 
   /**
    * Indexing service (needed if QUERY is also used!).
    */
-  INDEX("index");
+  INDEX
 
-  private final String identifier;
-
-  CouchbaseService(String identifier) {
-    this.identifier = identifier;
-  }
-
-  String getIdentifier() {
-    return identifier;
-  }
 }
