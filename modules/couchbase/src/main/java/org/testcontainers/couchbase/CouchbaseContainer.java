@@ -19,14 +19,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.ContainerNetwork;
-import lombok.Cleanup;
 import okhttp3.Credentials;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.rnorth.ducttape.unreliables.Unreliables;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
@@ -39,7 +37,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -240,7 +237,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
     private void renameNode() {
         logger().debug("Renaming Couchbase Node from localhost to {}", getHost());
 
-        @Cleanup Response response = doHttpRequest(MGMT_PORT, "/node/controller/rename", "POST", new FormBody.Builder()
+        Response response = doHttpRequest(MGMT_PORT, "/node/controller/rename", "POST", new FormBody.Builder()
             .add("hostname", getInternalIpAddress())
             .build(), false
         );
@@ -264,7 +261,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
             }
         }).collect(Collectors.joining(","));
 
-        @Cleanup Response response = doHttpRequest(MGMT_PORT, "/node/controller/setupServices", "POST", new FormBody.Builder()
+        Response response = doHttpRequest(MGMT_PORT, "/node/controller/setupServices", "POST", new FormBody.Builder()
             .add("services", services)
             .build(), false
         );
@@ -280,7 +277,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
     private void configureAdminUser() {
         logger().debug("Configuring couchbase admin user with username: \"{}\"", username);
 
-        @Cleanup Response response = doHttpRequest(MGMT_PORT, "/settings/web", "POST", new FormBody.Builder()
+        Response response = doHttpRequest(MGMT_PORT, "/settings/web", "POST", new FormBody.Builder()
             .add("username", username)
             .add("password", password)
             .add("port", Integer.toString(MGMT_PORT))
@@ -321,7 +318,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
             builder.add("ftsSSL", Integer.toString(getMappedPort(SEARCH_SSL_PORT)));
         }
 
-        @Cleanup Response response = doHttpRequest(
+        final Response response = doHttpRequest(
             MGMT_PORT,
             "/node/controller/setupAlternateAddresses/external",
             "PUT",
@@ -338,7 +335,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
     private void configureIndexer() {
         logger().debug("Configuring the indexer service");
 
-        @Cleanup Response response = doHttpRequest(MGMT_PORT, "/settings/indexes", "POST", new FormBody.Builder()
+        Response response = doHttpRequest(MGMT_PORT, "/settings/indexes", "POST", new FormBody.Builder()
             .add("storageMode", "memory_optimized")
             .build(), true
         );
@@ -355,7 +352,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
         for (BucketDefinition bucket : buckets) {
             logger().debug("Creating bucket \"" + bucket.getName() + "\"");
 
-            @Cleanup Response response = doHttpRequest(MGMT_PORT, "/pools/default/buckets", "POST", new FormBody.Builder()
+            Response response = doHttpRequest(MGMT_PORT, "/pools/default/buckets", "POST", new FormBody.Builder()
                 .add("name", bucket.getName())
                 .add("ramQuotaMB", Integer.toString(bucket.getQuota()))
                 .build(), true);
@@ -369,27 +366,9 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
                 .forStatusCode(200)
                 .waitUntilReady(this);
 
-            if (enabledServices.contains(CouchbaseService.QUERY)) {
-                // If the query service is enabled, make sure that we only proceed if the query engine also
-                // knows about the bucket in its metadata configuration.
-                Unreliables.retryUntilTrue(1, TimeUnit.MINUTES, () -> {
-                    @Cleanup Response queryResponse = doHttpRequest(QUERY_PORT, "/query/service", "POST", new FormBody.Builder()
-                        .add("statement", "SELECT COUNT(*) > 0 as present FROM system:keyspaces WHERE name = \"" + bucket.getName() + "\"")
-                        .build(), true);
-
-                    String body = queryResponse.body() != null ? queryResponse.body().string() : null;
-                    checkSuccessfulResponse(queryResponse, "Could not poll query service state for bucket: " + bucket.getName());
-
-                    return Optional.of(MAPPER.readTree(body))
-                        .map(n -> n.at("/results/0/present"))
-                        .map(JsonNode::asBoolean)
-                        .orElse(false);
-                });
-            }
-
             if (bucket.hasPrimaryIndex()) {
                 if (enabledServices.contains(CouchbaseService.QUERY)) {
-                    @Cleanup Response queryResponse = doHttpRequest(QUERY_PORT, "/query/service", "POST", new FormBody.Builder()
+                    Response queryResponse = doHttpRequest(QUERY_PORT, "/query/service", "POST", new FormBody.Builder()
                         .add("statement", "CREATE PRIMARY INDEX on `" + bucket.getName() + "`")
                         .build(), true);
 
@@ -418,8 +397,14 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
      * @param message the message that should be part of the exception of not successful.
      */
     private void checkSuccessfulResponse(final Response response, final String message) {
-        if (!response.isSuccessful()) {
-            throw new IllegalStateException(message + ": " + response.toString());
+        try {
+            if (!response.isSuccessful()) {
+                throw new IllegalStateException(message + ": " + response.toString());
+            }
+        } finally {
+            if (response.body() != null) {
+                response.body().close();
+            }
         }
     }
 
