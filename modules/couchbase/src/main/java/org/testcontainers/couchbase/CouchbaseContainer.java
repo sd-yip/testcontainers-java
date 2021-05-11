@@ -72,7 +72,7 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
     private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("couchbase/server");
 
-    private static final String DEFAULT_TAG = "6.5.1";
+    private static final String DEFAULT_TAG = "6.5.0";
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
