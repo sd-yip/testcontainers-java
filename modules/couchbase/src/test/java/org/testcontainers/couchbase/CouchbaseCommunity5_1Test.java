@@ -14,7 +14,7 @@ public class CouchbaseCommunity5_1Test extends BaseCouchbaseContainerTest {
     public CouchbaseContainer container = initCouchbaseContainer();
 
     private static CouchbaseContainer initCouchbaseContainer() {
-        CouchbaseContainer couchbaseContainer = new CouchbaseContainer("couchbase/server:community-5.1.1");
+        CouchbaseContainer couchbaseContainer = new CouchbaseContainer("couchbase:community-5.1.1");
 
         final UserSettings communityAdminUserSettings =
             UserSettings.build()

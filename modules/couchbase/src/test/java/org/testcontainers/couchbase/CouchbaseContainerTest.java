@@ -6,9 +6,9 @@ import org.testcontainers.utility.DockerImageName;
 public class CouchbaseContainerTest {
 
     private static final DockerImageName COUCHBASE_IMAGE_ENTERPRISE =
-        DockerImageName.parse("couchbase/server:enterprise-6.6.2");
+        DockerImageName.parse("couchbase:enterprise-6.6.2");
     private static final DockerImageName COUCHBASE_IMAGE_COMMUNITY =
-        DockerImageName.parse("couchbase/server:community-6.6.0");
+        DockerImageName.parse("couchbase:community-6.6.0");
 
     @Test
     public void shouldStopWithoutThrowingExceptionForEnterpriseContainer() {

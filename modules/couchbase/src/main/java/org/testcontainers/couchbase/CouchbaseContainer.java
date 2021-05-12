@@ -63,7 +63,7 @@ import static org.testcontainers.couchbase.CouchbaseContainer.CouchbasePort.*;
 public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
     private static final String DEFAULT_TAG = "5.5.1";
-    private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("couchbase/server");
+    private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("couchbase");
     public static final ObjectMapper MAPPER = new ObjectMapper();
     public static final String STATIC_CONFIG = "/opt/couchbase/etc/couchbase/static_config";
     public static final String CAPI_CONFIG = "/opt/couchbase/etc/couchdb/default.d/capi.ini";
