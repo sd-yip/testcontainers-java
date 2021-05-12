@@ -140,6 +140,26 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
         return Sets.newHashSet(getMappedPort(REST));
     }
 
+    public final String getUsername() {
+        return clusterUsername;
+    }
+
+    public final String getPassword() {
+        return clusterPassword;
+    }
+
+    public int getBootstrapCarrierDirectPort() {
+        return getMappedPort(MEMCACHED);
+    }
+
+    public int getBootstrapHttpDirectPort() {
+        return getMappedPort(REST);
+    }
+
+    public String getConnectionString() {
+        return String.format("couchbase://%s:%d", getHost(), getBootstrapCarrierDirectPort());
+    }
+
     @Override
     protected void configure() {
         if (clusterPassword.length() < REQUIRED_DEFAULT_PASSWORD_LENGTH) {
