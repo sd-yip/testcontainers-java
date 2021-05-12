@@ -101,11 +101,11 @@ subprojects {
         configurations = []
         classifier = null
 
-        doFirst {
+        def relocatePackages = { configurations, basePackage ->
             // See https://github.com/johnrengelman/shadow/blob/5.0.0/src/main/groovy/com/github/jengelman/gradle/plugins/shadow/tasks/ConfigureShadowRelocation.groovy
             Set<String> packages = []
-            // Always read from core's configurations
-            for (configuration in tasks.getByPath(":testcontainers:shadowJar").configurations) {
+
+            for (configuration in configurations) {
                 for (jar in configuration.files) {
                     def jf = new java.util.jar.JarFile(jar)
                     for (entry in jf.entries()) {
@@ -123,7 +123,21 @@ subprojects {
             for (pkg in packages) {
                 pkg = pkg.replaceAll('/', '.')
 
-                tasks.shadowJar.relocate(pkg, "org.testcontainers.shaded.${pkg}")
+                tasks.shadowJar.relocate(pkg, "$basePackage.$pkg")
+            }
+        }
+        doFirst {
+            if (project.name != 'couchbase5') {
+                // Always read from core's configurations
+                relocatePackages(
+                    tasks.getByPath(":testcontainers:shadowJar").configurations,
+                    'org.testcontainers.shaded'
+                )
+            } else {
+                relocatePackages(
+                    configurations,
+                    "org.testcontainers.${project.name}.shaded"
+                )
             }
         }
     }

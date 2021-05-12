@@ -1,9 +1,15 @@
 description = 'Testcontainers :: Couchbase5'
 
+shadowJar {
+    configurations = [project.configurations.shadow]
+}
+
 dependencies {
+    def couchbaseSdk = 'com.couchbase.client:java-client:2.7.13'
     compile "org.testcontainers:testcontainers:$upstreamVersion"
-    compile 'com.couchbase.client:java-client:2.7.13'
+    shadow couchbaseSdk
     compileOnly 'org.jetbrains:annotations:20.1.0'
 
     testCompile project(':test-support')
+    testImplementation couchbaseSdk
 }
