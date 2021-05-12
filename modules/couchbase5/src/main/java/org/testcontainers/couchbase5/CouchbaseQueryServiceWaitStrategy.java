@@ -1,4 +1,4 @@
-package org.testcontainers.couchbase;
+package org.testcontainers.couchbase5;
 
 import com.couchbase.client.core.message.cluster.GetClusterConfigRequest;
 import com.couchbase.client.core.message.cluster.GetClusterConfigResponse;

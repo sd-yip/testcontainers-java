@@ -1,4 +1,4 @@
-package org.testcontainers.couchbase;
+package org.testcontainers.couchbase5;
 
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.CouchbaseCluster;

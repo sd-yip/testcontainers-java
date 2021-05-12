@@ -1,4 +1,4 @@
-package org.testcontainers.couchbase;
+package org.testcontainers.couchbase5;
 
 import com.couchbase.client.java.document.RawJsonDocument;
 import com.couchbase.client.java.query.N1qlQuery;
@@ -7,7 +7,7 @@ import com.couchbase.client.java.query.N1qlQueryRow;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
-import com.google.common.collect.Lists;
+import org.testcontainers.shaded.com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

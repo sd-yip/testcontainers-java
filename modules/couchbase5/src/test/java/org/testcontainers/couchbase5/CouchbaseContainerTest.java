@@ -1,4 +1,4 @@
-package org.testcontainers.couchbase;
+package org.testcontainers.couchbase5;
 
 import org.junit.Test;
 import org.testcontainers.utility.DockerImageName;

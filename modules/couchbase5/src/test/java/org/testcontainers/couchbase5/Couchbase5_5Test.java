@@ -1,4 +1,4 @@
-package org.testcontainers.couchbase;
+package org.testcontainers.couchbase5;
 
 import org.junit.Rule;
 

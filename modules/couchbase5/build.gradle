@@ -1,7 +1,7 @@
-description = "Testcontainers :: Couchbase"
+description = 'Testcontainers :: Couchbase5'
 
 dependencies {
-    compile project(':testcontainers')
+    compile "org.testcontainers:testcontainers:$upstreamVersion"
     compile 'com.couchbase.client:java-client:2.7.13'
     compileOnly 'org.jetbrains:annotations:20.1.0'
 

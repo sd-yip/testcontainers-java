@@ -1,12 +1,12 @@
-# Couchbase Module
+# Couchbase 5 Module
 
 <img src="https://cdn.worldvectorlogo.com/logos/couchbase.svg" width="300" />
 
-Testcontainers module for Couchbase. [Couchbase](https://www.couchbase.com/) is a document oriented NoSQL database.
+Testcontainers module for Couchbase 5. [Couchbase](https://www.couchbase.com/) is a document oriented NoSQL database.
 
 ## Usage example
 
-Running Couchbase as a stand-in in a test:
+Running Couchbase 5 as a stand-in in a test:
 
 ### Create your own bucket
 
@@ -14,7 +14,7 @@ Running Couchbase as a stand-in in a test:
 public class SomeTest {
 
     @Rule
-    public CouchbaseContainer couchbase = new CouchbaseContainer()
+    public CouchbaseContainer couchbase = new CouchbaseContainer("couchbase:5.5.2")
              .withClusterAdmin("admin", "secret")
              .withNewBucket(DefaultBucketSettings.builder()
                         .enableFlush(true)
@@ -73,13 +73,13 @@ So if you disable Query, Search and Analytic service, you can run multiple insta
 Add the following dependency to your `pom.xml`/`build.gradle` file:
 
 ```groovy tab='Gradle'
-testCompile "org.testcontainers:couchbase:{{latest_version}}"
+testCompile "io.github.sd-yip.testcontainers-java:couchbase5:{{latest_version}}"
 ```
 
 ```xml tab='Maven'
 <dependency>
-    <groupId>org.testcontainers</groupId>
-    <artifactId>couchbase</artifactId>
+    <groupId>io.github.sd-yip.testcontainers-java</groupId>
+    <artifactId>couchbase5</artifactId>
     <version>{{latest_version}}</version>
     <scope>test</scope>
 </dependency>

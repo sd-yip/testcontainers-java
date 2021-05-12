@@ -21,6 +21,7 @@ dependencies {
     testCompileClasspath 'org.jetbrains:annotations:20.1.0'
 }
 
+def sourceJar = {} // Disable the below 'sourceJar' block without deleting it (to reduce diff)
 sourceJar {
     /* allJava is default (see gradle/publishing.gradle:sourceJar)
        allSource contains both .java and .groovy files */

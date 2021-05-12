@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.testcontainers.couchbase;
+package org.testcontainers.couchbase5;
 
 import com.couchbase.client.core.utils.Base64;
 import com.couchbase.client.java.Bucket;
@@ -22,14 +22,14 @@ import com.couchbase.client.java.cluster.*;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
 import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 import com.couchbase.client.java.query.Index;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
-import com.google.common.collect.Lists;
+import org.testcontainers.shaded.com.google.common.collect.Lists;
 import lombok.*;
 import org.apache.commons.compress.utils.Sets;
-import org.apache.commons.io.IOUtils;
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.net.HttpURLConnection.HTTP_OK;
-import static org.testcontainers.couchbase.CouchbaseContainer.CouchbasePort.*;
+import static org.testcontainers.couchbase5.CouchbaseContainer.CouchbasePort.*;
 
 /**
  * Based on Laurent Doguin version,
