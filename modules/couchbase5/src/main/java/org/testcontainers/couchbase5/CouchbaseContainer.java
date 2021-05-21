@@ -104,6 +104,8 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
     private SocatContainer proxy;
 
+    private final DockerImageName socatDockerImageName;
+
     private boolean communityMode = false;
 
     /**
@@ -129,7 +131,20 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
      * @param dockerImageName the image name that should be used.
      */
     public CouchbaseContainer(final DockerImageName dockerImageName) {
+        this(dockerImageName, null);
+    }
+
+    /**
+     * Create a new couchbase container with the specified image name.
+     * @param dockerImageName the image name that should be used.
+     * @param socatDockerImageName the image name that should be used for the proxy.
+     */
+    public CouchbaseContainer(
+        final DockerImageName dockerImageName,
+        final DockerImageName socatDockerImageName
+    ) {
         super(dockerImageName);
+        this.socatDockerImageName = socatDockerImageName;
 
         dockerImageName.assertCompatibleWith(DEFAULT_IMAGE_NAME);
 
@@ -184,7 +199,9 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
     @SneakyThrows
     private void startProxy(String networkAlias) {
-        proxy = new SocatContainer().withNetwork(getNetwork());
+        SocatContainer socatContainer =
+            socatDockerImageName == null ? new SocatContainer() : new SocatContainer(socatDockerImageName);
+        proxy = socatContainer.withNetwork(getNetwork());
 
         for (CouchbasePort port : CouchbasePort.values()) {
             if (port.isDynamic()) {
